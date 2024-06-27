@@ -13,6 +13,7 @@ return {
   dependencies = {
     -- Creates a beautiful debugger UI
     'rcarriga/nvim-dap-ui',
+    { 'theHamsta/nvim-dap-virtual-text' },
 
     -- Required dependency for nvim-dap-ui
     'nvim-neotest/nvim-nio',
@@ -23,6 +24,14 @@ return {
 
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
+    'mfussenegger/nvim-dap-python',
+    'mxsdev/nvim-dap-vscode-js',
+    {
+      'microsoft/vscode-js-debug',
+      opt = true,
+      build = 'npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out',
+    },
+    { 'jbyuki/one-small-step-for-vimkind', module = 'osv' },
   },
   config = function()
     local dap = require 'dap'
@@ -42,10 +51,83 @@ return {
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
+        'go',
+        'python',
+        'vscode-js-debug',
+        'vscode-go-debug',
+        'vscode-python-debug',
+        'vscode-java-debug',
+        'vscode-csharp-debug',
+        'vscode-cpp-debug',
+        'vscode-javascript-debug',
+        'vscode-typescript-debug',
+        'vscode-ruby-debug',
+        'vscode-php-debug',
+        'vscode-lua-debug',
+        'vscode-r-debug',
+        'vscode-swift-debug',
+        'vscode-elixir-debug',
+        'vscode-elixir-ls-debug',
+        'vscode-haskell-debug',
+        'vscode-rust-debug',
+        'vscode-scala-debug',
+        'vscode-elixir-debug',
       },
     }
 
+    dap.configurations.java = {
+      {
+        type = 'java',
+        request = 'attach',
+        name = 'Debug (Attach) - Remote',
+        hostName = '0.0.0.0',
+        port = 5005,
+      },
+    }
+
+    -- JS, TS
+    dap.adapters['pwa-node'] = {
+      type = 'server',
+      host = 'localhost',
+      port = '${port}',
+      executable = {
+        command = 'js-debug-adapter',
+        args = { '${port}' },
+      },
+    }
+
+    -- CPP configurations
+    dap.adapters.codelldb = {
+      type = 'server',
+      port = '${port}',
+      executable = {
+        command = 'codelldb',
+        args = { '--port', '${port}' },
+      },
+    }
+
+    -- -- .Net configurations
+    dap.adapters.coreclr = {
+      type = 'executable',
+      command = '/Users/petergiannopoulos/bin/netcoredbg',
+      args = { '--interpreter=vscode' },
+    }
+
+    dap.configurations.lua = {
+      {
+        type = 'nlua',
+        request = 'attach',
+        name = 'Attach to running Neovim instance',
+      },
+    }
+
+    dap.adapters.nlua = function(callback, config)
+      callback { type = 'server', host = config.host or '127.0.0.1', port = config.port or 8086 }
+    end
+
     -- Basic debugging keymaps, feel free to change to your liking!
+    vim.api.nvim_set_keymap('n', '<F12>', [[:lua require"dap.ui.widgets".hover()<CR>]], { noremap = true })
+    vim.api.nvim_set_keymap('n', '<F8>', [[:lua require"dap".toggle_breakpoint()<CR>]], { noremap = true })
     vim.keymap.set('n', '<F5>', dap.continue, { desc = 'Debug: Start/Continue' })
     vim.keymap.set('n', '<F1>', dap.step_into, { desc = 'Debug: Step Into' })
     vim.keymap.set('n', '<F2>', dap.step_over, { desc = 'Debug: Step Over' })
