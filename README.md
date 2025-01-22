@@ -61,6 +61,8 @@ fork to your machine using one of the commands below, depending on your OS.
 Your fork's url will be something like this:
 https://github.com/<your_github_username>/kickinthehead.nvim.git
 
+You likely want to remove `lazy-lock.json` from your fork's `.gitignore` file
+too - it's ignored in the kickstart repo to make maintenance easier, but it's
 Clone KickInTheHead.nvim
 
 *NOTE*
@@ -98,9 +100,19 @@ Read through the CONFIGUREME.md file in your configuration folder for more
 information about extending and exploring Neovim. That also includes
 examples of adding popularly requested plugins.
 
+> [!NOTE]
+> For more information about a particular plugin check its repository's documentation.
+
+
 ## Getting Started
 
 The Only Video You Need to Get Started with Neovim
+    into smaller parts. A fork of kickstart that does this while maintaining the
+    same functionality is available here:
+    * [kickstart-modular.nvim](https://github.com/dam9000/kickstart-modular.nvim)
+  * Discussions on this topic can be found here:
+    * [Restructure the configuration](https://github.com/nvim-lua/kickstart.nvim/issues/218)
+    * [Reorganize init.lua into a multi-file setup](https://github.com/nvim-lua/kickstart.nvim/pull/473)
 
 ## Install Recipes
 
